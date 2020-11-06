@@ -9,4 +9,8 @@ defmodule Sequence.PopServer do
     {:reply, current_list, t}
   end
 
+  def handle_cast({:push, thing}, current_list) do
+    { :noreply, [thing|current_list]}
+  end
+
 end
