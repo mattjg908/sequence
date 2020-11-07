@@ -1,11 +1,11 @@
-defmodule Sequence.PopServer do
+defmodule Sequence.StackServer do
   use GenServer
 
   #####
   # External API
 
-  def start_link(initial_list) do
-    GenServer.start_link(__MODULE__, initial_list, name: __MODULE__)
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def pop do
@@ -16,8 +16,8 @@ defmodule Sequence.PopServer do
     GenServer.cast __MODULE__, {:push, thing}
   end
 
-  def init(initial_list) do
-    {:ok, initial_list}
+  def init(_) do
+    {:ok, Sequence.StackStash.get()}
   end
 
   def handle_call(:pop, _from, [_h|t] = current_list) do
@@ -28,8 +28,8 @@ defmodule Sequence.PopServer do
     {:noreply, [thing|current_list]}
   end
 
-  def terminate(reason, state) do
-    IO.puts "Terminate because #{inspect reason}, state at exit #{inspect state}"
+  def terminate(_reason, current_list) do
+    Sequence.StackStash.update(current_list)
   end
 
 end
